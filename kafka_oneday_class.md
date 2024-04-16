@@ -18,6 +18,7 @@
 
 Apache Kafka의 구조를 이해하는 데 있어 중요한 몇 가지 기본 구성 요소들이 있습니다. 이들은 Kafka가 데이터를 효율적으로 처리하고 관리하는 데 필수적인 역할을 합니다.
 
+![kafka_diagram_1](https://github.com/yonghee-lee/edu/assets/17740815/219cb5a9-5e9e-4f96-90dd-1b62210155ea)
 
 
 

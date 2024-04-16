@@ -18,8 +18,7 @@
 
 Apache Kafka의 구조를 이해하는 데 있어 중요한 몇 가지 기본 구성 요소들이 있습니다. 이들은 Kafka가 데이터를 효율적으로 처리하고 관리하는 데 필수적인 역할을 합니다.
 
-![kafka_diagram_1](https://github.com/yonghee-lee/edu/assets/17740815/219cb5a9-5e9e-4f96-90dd-1b62210155ea)
-
+![kafka_diagram_1](https://github.com/yonghee-lee/edu/assets/17740815/7988a5c4-3ea9-4ba3-aca5-fbdb9f74c2a0)
 
 
 #### 1. 토픽(Topic)
@@ -142,13 +141,13 @@ services:
       - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
-
+  
   kafka2:
     image: confluentinc/cp-kafka:latest
     depends_on:
@@ -157,13 +156,13 @@ services:
       - "9093:9093"
     environment:
       KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
-
+  
   kafka3:
     image: confluentinc/cp-kafka:latest
     depends_on:
@@ -172,12 +171,28 @@ services:
       - "9094:9094"
     environment:
       KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9094
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
+      
+  kafka-manager:
+    image: kafkamanager/kafka-manager
+    restart: always
+    ports:
+      - "9000:9000"
+    container_name: kafka-manager
+    environment:
+      ZK_HOSTS: zookeeper:2181
+      APPLICATION_SECRET: letmein
+      KAFKA_MANAGER_AUTH_ENABLED: "false"
+      KAFKA_MANAGER_HOME: "/kafka-manager"
+    volumes:
+      - ./kafka-manager:/kafka-manager
+    depends_on:
+      - zookeeper
 ```
 
 ##### 기본 토픽 생성
@@ -186,7 +201,7 @@ services:
 - 예를 들어, 토픽을 생성하는 명령은 다음과 같습니다:
 
 ```sh
-bin/kafka-topics --create --topic my-topic --bootstrap-server localhost:9092 --replication-factor 3 --partitions 1
+bin/kafka-topics --create --topic my-topic --bootstrap-server localhost:9092 --replication-factor 3 --partitions 3
 ```
 
 - 생성된 토픽을 확인합니다.
